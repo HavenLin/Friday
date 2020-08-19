@@ -42,54 +42,42 @@
 
 package leetcode.editor.cn;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Stack;
 
 public class ValidParentheses{
     public static void main(String[] args) {
-        String test = "([)]";
+        List<String> tests = Arrays.asList("([)]", "()[]{}", "", "((", "(]", "{[]}", "([)", "(([]){})");
+        List<Boolean> results = Arrays.asList(false, true, true, false, false, true, false, true);
         Solution solution =  new ValidParentheses().new Solution();
-        boolean testResult = solution.isValid(test);
-        assert testResult;
+        for (int i = 0; i < tests.size(); i++) {
+            try {
+                if (solution.isValid(tests.get(i)) != results.get(i)) {
+                    throw new NullPointerException("test failed");
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage() + " - " + tests.get(i)
+                        + " - Output:" + solution.isValid(tests.get(i))
+                        + " - Expected:" + results.get(i));
+            }
+        }
     }
     
    //leetcode submit region begin(Prohibit modification and deletion)
 class Solution {
     public boolean isValid(String s) {
-        char [] ss = s.toCharArray();
-        Stack<Integer> descOrder = new Stack<>();
-        Queue<Integer> acsOrder = new ArrayDeque<>();
-        for (int i = 0; i < ss.length; i++) {
-            if (ss[i] == '(' || ss[i] == ')') {
-                descOrder.add(1);
-                acsOrder.add(1);
-            } else if (ss[i] == '{' || ss[i] == '}') {
-                acsOrder.add(2);
-                descOrder.add(2);
-            } else if (ss[i] == '[' || ss[i] == ']') {
-                acsOrder.add(3);
-                descOrder.add(3);
-            }
+        Stack<Character> stack = new Stack<>();
+        for (char c : s.toCharArray()) {
+            if (c == '(') stack.push(')');
+            else if (c == '{') stack.push('}');
+            else if (c == '[') stack.push(']');
+            else if (stack.isEmpty() || c != stack.pop()) return false;
         }
 
-        boolean isValid = true;
-        for (int i = 0; i < ss.length; i++) {
-            int headBracket = acsOrder.poll();
-            int tailBracket = descOrder.pop();
-            if (i % 2 != 0 && i+1 <= ss.length - 1 && headBracket == ss[i+1]) {
-                continue;
-            }
-
-            if (headBracket != tailBracket) {
-                isValid = false;
-                break;
-            }
-        }
-
-        return isValid;
+        return stack.isEmpty();
     }
-}
+   }
 //leetcode submit region end(Prohibit modification and deletion)
 
 }
