@@ -19,15 +19,15 @@
 
 package leetcode.editor.cn;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ConvertSortedListToBinarySearchTree{
     public static void main(String[] args) {
         Solution solution =  new ConvertSortedListToBinarySearchTree().new Solution();
         //[-10,-3,0,5,9]
-        ListNode listNode = new ListNode(-10,
-                new ListNode(-3,
-                        new ListNode(0,
-                                new ListNode(5,
-                                        new ListNode(9)))));
+        ListNode listNode = new ListNode(0,
+                new ListNode(1, new ListNode(2, new ListNode(3, new ListNode(4, new ListNode(5))))));
         TreeNode root = solution.sortedListToBST(listNode);
         System.out.println(root);
     }
@@ -60,26 +60,42 @@ public class ConvertSortedListToBinarySearchTree{
  */
 class Solution {
     public TreeNode sortedListToBST(ListNode head) {
-        TreeNode root = new TreeNode();
-        return convertBst(root, head);
-    }
-
-    TreeNode convertBst(TreeNode root, ListNode head) {
         if (head == null) {
-            return root;
+            return null;
         }
 
-        if (root.val == 0) {
-            root.val = head.val;
+        List<Integer> sortedList = new ArrayList<>();
+        while(head != null) {
+            sortedList.add(head.val);
             head = head.next;
         }
 
-        if (head.val > root.val) {
-            root.right = new TreeNode(head.val);
-            root = convertBst(root.right, head.next);
+        int min = sortedList.size() / 2;
+        TreeNode root = new TreeNode(sortedList.get(min));
+        for (int i = 0; i < sortedList.size(); i++) {
+            root = addNode(root, sortedList.get(i));
+        }
+
+        return root;
+    }
+
+    TreeNode addNode(TreeNode root, int val) {
+        if (val == root.val) {
+            return root;
+        }
+
+        if (val > root.val) {
+            if (root.right == null) {
+                root.right = new TreeNode(val);
+            } else {
+                root.right = addNode(root.right, val);
+            }
         } else {
-            root.left = new TreeNode(head.val);
-            root = convertBst(root.left, head.next);
+            if (root.left == null) {
+                root.left = new TreeNode(val);
+            } else {
+                root.left = addNode(root.left, val);
+            }
         }
 
         return root;
