@@ -19,9 +19,6 @@
 
 package leetcode.editor.cn;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ConvertSortedListToBinarySearchTree{
     public static void main(String[] args) {
         Solution solution =  new ConvertSortedListToBinarySearchTree().new Solution();
@@ -62,41 +59,28 @@ class Solution {
     public TreeNode sortedListToBST(ListNode head) {
         if (head == null) {
             return null;
+        } else if (head.next == null) {
+            return new TreeNode(head.val);
         }
 
-        List<Integer> sortedList = new ArrayList<>();
-        while(head != null) {
-            sortedList.add(head.val);
-            head = head.next;
-        }
-
-        int min = sortedList.size() / 2;
-        TreeNode root = new TreeNode(sortedList.get(min));
-        for (int i = 0; i < sortedList.size(); i++) {
-            root = addNode(root, sortedList.get(i));
-        }
-
-        return root;
-    }
-
-    TreeNode addNode(TreeNode root, int val) {
-        if (val == root.val) {
-            return root;
-        }
-
-        if (val > root.val) {
-            if (root.right == null) {
-                root.right = new TreeNode(val);
+        ListNode fast = head;
+        ListNode slow = head;
+        ListNode leftTail = head;
+        while (fast != null) {
+            if (fast.next != null) {
+                fast  = fast.next.next;
             } else {
-                root.right = addNode(root.right, val);
+                break;
             }
-        } else {
-            if (root.left == null) {
-                root.left = new TreeNode(val);
-            } else {
-                root.left = addNode(root.left, val);
-            }
+
+            leftTail = slow;
+            slow = slow.next;
         }
+
+        leftTail.next = null;
+        TreeNode root = new TreeNode(slow.val);
+        root.left = sortedListToBST(head);
+        root.right = sortedListToBST(slow.next);
 
         return root;
     }
