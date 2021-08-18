@@ -10,7 +10,7 @@ $!velocityTool.camelCaseName(${question.titleSlug})
 
 CodeFileTemplate: 
 ${question.content}
-package leetcode.editor.cn;
+package java.cn;
 
 public class $!velocityTool.camelCaseName(${question.titleSlug}){
     public static void main(String[] args) {
